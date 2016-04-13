@@ -1,7 +1,4 @@
-﻿using System;
-using System.Globalization;
-using System.Linq;
-using System.Security.Claims;
+﻿using System.Linq;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
@@ -22,18 +19,18 @@ namespace SampleWebApp.Controllers
     {
         private ApplicationSignInManager _signInManager;
         private ApplicationUserManager _userManager; //Repository.AccountsRepository accountsRepository = new Repository.AccountsRepository();
-        IAccountsRepository _accountsRepository;
+        AccountsHelper _accountsHelper;
 
         public AccountController()
         {
 
         }
 
-        public AccountController(AccountsRepository accountsRepository)
+        public AccountController(AccountsHelper accountsHelper)
         {
             //UserManager = userManager;
             //SignInManager = signInManager;
-            _accountsRepository = accountsRepository;
+            _accountsHelper = accountsHelper;
         }
 
         public ApplicationSignInManager SignInManager
@@ -71,7 +68,7 @@ namespace SampleWebApp.Controllers
 
         [AllowAnonymous]
         public ActionResult MemberLogin()
-        {   
+        {
             if (Request.IsAuthenticated)
             {
                 return RedirectToAction("Index", "Home");
@@ -88,24 +85,22 @@ namespace SampleWebApp.Controllers
             if (!ModelState.IsValid)
                 return View(model);
 
-            var result = _accountsRepository.Login(model.Username, model.Password);
-            switch (result.Result)
+            model = _accountsHelper.CheckLogin(model);
+            switch (model.Result)
             {
                 case 1:
-                    DataPersister.Current.userModel = null;
-                    FormsAuthentication.SetAuthCookie(model.Username, model.RememberMe);
                     return RedirectToAction("Index", "Home");
                 case 2:
-                    ModelState.AddModelError("Error", result.ErrorMessage);
+                    ModelState.AddModelError("Error", model.ErrorMessage);
                     break;
                 case 3:
-                    ModelState.AddModelError("Password", result.ErrorMessage);
+                    ModelState.AddModelError("Password", model.ErrorMessage);
                     break;
                 case 4:
-                    ModelState.AddModelError("Username", result.ErrorMessage);
+                    ModelState.AddModelError("Username", model.ErrorMessage);
                     break;
                 default:
-                    ModelState.AddModelError("Error",Resource.UnSpecifiedError);
+                    ModelState.AddModelError("Error", Resource.UnSpecifiedError);
                     break;
             };
 

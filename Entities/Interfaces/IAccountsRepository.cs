@@ -8,6 +8,6 @@ namespace Entities.Interfaces
 {
     public interface IAccountsRepository
     {
-        LoginStatus Login(string username, string password);
+        UserInfo Login(string username, string password);                                                       
     }
 }

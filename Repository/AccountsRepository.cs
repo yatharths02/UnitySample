@@ -14,9 +14,9 @@ namespace Repository
     public class AccountsRepository : IAccountsRepository
     {
         List<SqlParameter> lstParameters;
-        public LoginStatus Login(string username, string password)
+        public UserInfo Login(string username, string password)
         {
-            LoginStatus loginStatus;
+            UserInfo userInfo = new UserInfo();
             lstParameters = new List<SqlParameter>();
 
             DataAccess.AddInParameter<string>(ref lstParameters, "@Username", username, SqlDbType.VarChar);
@@ -28,12 +28,21 @@ namespace Repository
 
             DataSet ds = DataAccess.ExecuteDataSet("USPCheckLogin", ref lstParameters);
 
-            loginStatus.Result = (int)lstParameters[4].Value;
-            loginStatus.ErrorMessage = (string)lstParameters[3].Value.ToString();
-            loginStatus.Message = (string)lstParameters[2].Value.ToString();
+            userInfo.Result = (int)lstParameters[4].Value;
+            userInfo.ErrorMessage = (string)lstParameters[3].Value.ToString();
+            userInfo.Message = (string)lstParameters[2].Value.ToString();
+
+            if (userInfo.Result == 1)
+            {
+                if (ds !=null && ds.Tables.Count > 0)
+                {
+                    userInfo.Username = ds.Tables[0].Rows[0]["Username"].ToString();
+                    userInfo.isActive = Convert.ToBoolean(ds.Tables[0].Rows[0]["isActive"]);
+                }
+            }
 
             DataAccess.ClearListParameters(ref lstParameters);
-            return loginStatus;
+            return userInfo;
         }
 
 

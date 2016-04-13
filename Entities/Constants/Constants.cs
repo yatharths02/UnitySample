@@ -6,14 +6,10 @@ using System.Threading.Tasks;
 
 namespace Entities.Constants
 {
-    public class Constants
+    public enum DBAccessVar
     {
-        public enum DBAccessVar
-        {
-            ExecuteNonQuery=1,
-            ExecuteScalar=2 ,
-            ReturnDataSet=3 
-        };
-
-    }
+        ExecuteNonQuery = 1,
+        ExecuteScalar = 2,
+        ReturnDataSet = 3
+    };
 }

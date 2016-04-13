@@ -1,10 +1,11 @@
-﻿using System;
+﻿using Entities.Models;
+using System;
 using System.ComponentModel.DataAnnotations;
 
 
 namespace Entities
 {
-    public class UserMasterViewModel
+    public class UserMasterViewModel : OutputVar
     {
         [Required]
         [Display(Name = "Username")]
@@ -48,12 +49,5 @@ namespace Entities
         public string UpdatedBy { get; set; }
         public DateTime? UpdatedDate { get; set; }
 
-    }
-
-    public struct LoginStatus
-    {
-        public int Result ;
-        public string Message;
-        public string ErrorMessage;
     }
 }
